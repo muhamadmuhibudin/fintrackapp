@@ -1,59 +1,91 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FinTrackApp
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+FinTrackApp is a high-performance, enterprise-grade **RESTful API & Modern Financial Dashboard** engineered for precise tracking of micro-finance data, digital wallets, and QRIS payments. Built on top of **Laravel 12**, **Livewire v3**, and **Tailwind CSS**, this ecosystem provides high-throughput transaction ledger systems paired with intuitive, reactive internal governance tools.
 
-## About Laravel
+This repository is strictly optimized for production environments, showcasing defensive programming paradigms, clean architectural separation of concerns, strict database constraints, and full type safety (PHP 8.2+).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Architectural & Engineering Highlights
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **High-Throughput Webhook Ingestion API:** Optimized RESTful endpoints built to capture, sanitize, and log complex multi-nested raw JSON payloads from third-party payment gateways and digital wallet webhooks without data dropping.
+- **Dynamic Budget Guardrails:** Server-side budgeting engine that enforces monthly allocation spending caps per category with strict validation mechanisms.
+- **Reactive Overspending Alerts:** A real-time event-driven notification architecture that instantly triggers alerts when specific budget thresholds are breached.
+- **Single-Page Ledger Analytics Dashboard:** A modern administrative internal portal powered by Laravel Livewire v3 for real-time visual cash flow streams and balance analytics without the operational bloat of decoupled JavaScript frameworks.
+- **Absolute Financial Data Precision:** Eliminates floating-point calculation discrepancies by implementing strict arithmetic precision definitions (`decimal:15,2`) across all transactional database schemas.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🛠️ Global Technology Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Core Framework:** Laravel 12 (PHP 8.2+)
+- **Reactive Interface Layer:** Laravel Livewire v3 & Tailwind CSS
+- **Relational Storage Engine:** PostgreSQL / MySQL (Fully indexed, relational transaction schemas)
+- **API Architectural Style:** Stateless REST Architecture with JSON-API compliant resource formatting
+- **Authentication & Security:** Token-based security isolation via Laravel Sanctum
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 📂 Production-Grade Directory Blueprint
 
-### Premium Partners
+The codebase enforces a highly decoupled layout pattern to maintain an absolute separation of concerns:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```text
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Api/               # Dispatched RESTful controllers handling stateless JSON interactions
+│   │   └── Web/               # Administrative views and dashboard routes
+│   ├── Requests/              # Isolated Form Requests for strict incoming payload schema validation
+│   └── Resources/             # Data transformation layers mapping Eloquent state to secure API payloads
+├── Livewire/                  # Reactive server-driven UI components for internal ledger visualizations
+└── Models/                    # Strictly typed Eloquent models encapsulating database state logic and casts
+```
+## 💻 Local Installation & Technical Deployment
 
-## Contributing
+### System Prerequisites
+- PHP >= 8.2 (with open `zip` and `pdo` extensions)
+- Composer Package Manager
+- Node.js & NPM
+- Relational Database Service (MySQL / PostgreSQL)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Setup Workflow
 
-## Code of Conduct
+1. **Clone the Infrastructure Workspace**
+bash
+```   git clone [https://github.com/muhamadmuhibudin/fintrackapp.git](https://github.com/muhamadmuhibudin/fintrackapp.git)
+   cd fintrackapp```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. **Provision Core Packages & Dependencies**
 
-## Security Vulnerabilities
+Bash
+```   composer install
+   npm install && npm run dev```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. **Configure Environment Safeguards**
 
-## License
+Bash
+```   cp .env.example .env
+   php artisan key:generate```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Note: Open the generated .env file and append your relational database credentials.
+
+4. **Execute Transactional Schema Migrations**
+
+Bash
+```   php artisan migrate```
+
+5. **Boot the Local Application Environment**
+
+Bash
+```   php artisan serve```
+
+## 🧪 Production & Coding Compliance Standard
+- Semantic Conventional Commits: Strict enforcement of meaningful git structures (feat(), fix(), refactor(), docs(), chore()) mapped linearly on an individual file basis.
+
+- Defensive Static Typing: Mandatory explicit scalar type hinting, class properties definitions, and strict return types across the entire application domain.
+
+- Idempotent Webhook Processing: Built-in validation structures guarding against duplicate webhook payloads and malicious raw data delivery.
+
+## 📄 License
+This ecosystem is open-sourced software licensed under the MIT License.
