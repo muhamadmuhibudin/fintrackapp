@@ -13,4 +13,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/transactions', [TransactionApiController::class, 'index']);
     Route::post('/transactions', [TransactionApiController::class, 'store']);
+
+// Payment Gateway Webhook Ingest Endpoint
+Route::post('/webhooks/payment-gateway', [WebhookController::class, 'handleGatewayWebhook']);
+
 });
