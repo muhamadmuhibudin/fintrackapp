@@ -16,7 +16,6 @@ class BudgetGuardrailService
     {
         $currentPeriod = Carbon::now()->format('Y-m');
 
-        // Ambil batasan budget untuk kategori dan periode bulan ini
         $budget = Budget::where('user_id', $user->id)
             ->where('category_id', $categoryId)
             ->where('period', $currentPeriod)
@@ -24,6 +23,25 @@ class BudgetGuardrailService
 
         if (!$budget) {
             return ['breached' => false, 'message' => 'No active budget cap defined for this category'];
+        }
+
+        $totalSpent = Transaction::where('user_id', $user->id)
+            ->where('category_id', $categoryId)
+            ->where('type', 'expense')
+            ->where('transaction_date', '>=', Carbon::now()->startOfMonth())
+            ->where('transaction_date', '<=', Carbon::now()->endOfMonth())
+            ->sum('amount');
+
+        $projectedSpent = $totalSpent + $incomingAmount;
+
+        if ($projectedSpent > $budget->amount) {
+            $overage = $projectedSpent - $budget->amount;
+            return [
+                'breached' => true,
+                'message' => "🚨 ALERT: This transaction will breach your monthly budget by $" . number_format($overage, 2),
+                'budget_limit' => $budget->amount,
+                'current_total' => $projectedSpent
+            ];
         }
 
         return ['breached' => false, 'message' => 'Initialization check pass'];
