@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use App\Services\BudgetGuardrailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -28,13 +29,28 @@ class TransactionApiController extends Controller
     /**
      * Store a newly created transaction stream in database ledger.
      */
-    public function store(StoreTransactionRequest $request): JsonResponse
+    public function store(StoreTransactionRequest $request, BudgetGuardrailService $guardrail): JsonResponse
     {
-        $transaction = $request->user()->transactions()->create($request->validated());
+        $user = $request->user();
+        $validatedData = $request->validated();
 
-        return (new TransactionResource($transaction->load('category')))
-            ->additional(['message' => 'Transaction successfully logged into ledger'])
-            ->response()
-            ->setStatusCode(201);
+        $alertMessage = null;
+        if ($validatedData['type'] === 'expense' && isset($validatedData['category_id'])) {
+            $check = $guardrail->checkTransactionBreach($user, $validatedData['category_id'], $validatedData['amount']);
+            if ($check['breached']) {
+                $alertMessage = $check['message'];
+            }
+        }
+
+        $transaction = $user->transactions()->create($validatedData);
+
+        $response = new TransactionResource($transaction->load('category'));
+
+        $metaData = ['message' => 'Transaction successfully logged into ledger'];
+        if ($alertMessage) {
+            $metaData['guardrail_alert'] = $alertMessage;
+        }
+
+        return $response->additional($metaData)->response()->setStatusCode(201);
     }
 }
