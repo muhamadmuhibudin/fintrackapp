@@ -1,150 +1,145 @@
 # FinTrackApp
 
-FinTrackApp is a high-performance, enterprise-grade **RESTful API & Modern Financial Dashboard** engineered for precise tracking of micro-finance data, digital wallets, and QRIS payments.
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Livewire](https://img.shields.io/badge/Livewire-Reactive_UI-FB70A9?style=for-the-badge&logo=livewire&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-Dark_UI-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Tests](https://img.shields.io/badge/PHPUnit-Passing-22C55E?style=for-the-badge&logo=phpunit&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-Built on top of **Laravel 12**, **Livewire v3**, and **Tailwind CSS**, this ecosystem provides high-throughput transaction ledger systems paired with intuitive, reactive internal governance tools.
+**FinTrackApp** is a high-performance, enterprise-grade **RESTful API & Reactive Financial Telemetry Dashboard** engineered for precise tracking of micro-finance ledgers, digital wallets, and automated payment gateway webhooks.
 
-This repository is strictly optimized for production environments, showcasing defensive programming paradigms, clean architectural separation of concerns, strict database constraints, and full type safety (PHP 8.2+).
+Built on top of **Laravel 12**, **Livewire**, and **Tailwind CSS**, this system pairs a stateless, Sanctum-secured transaction ingestion API with a real-time **Budget Guardrail Engine** that detects and flags category overspending before thresholds are breached.
 
 ---
 
-# 🚀 Architectural & Engineering Highlights
+## Live Telemetry & Guardrail Dashboard
+
+![FinTrackApp Dashboard Preview](docs/dashboard-preview.png)
+
+---
+
+## Architectural & Engineering Highlights
 
 - **High-Throughput Webhook Ingestion API**  
-  Optimized RESTful endpoints built to capture, sanitize, and log complex multi-nested raw JSON payloads from third-party payment gateways and digital wallet webhooks without data dropping.
+  Stateless RESTful endpoints built to capture, validate, and log multi-nested raw JSON payloads from payment gateways and QRIS webhooks with reference-number deduplication.
 
-- **Dynamic Budget Guardrails**  
-  Server-side budgeting engine that enforces monthly allocation spending caps per category with strict validation mechanisms.
+- **Modular Budget Guardrail Service (`BudgetGuardrailService`)**  
+  Decoupled domain service that evaluates incoming expenses against active monthly category caps (`YYYY-MM`) and returns real-time breach telemetry and overage calculations.
 
-- **Reactive Overspending Alerts**  
-  A real-time event-driven notification architecture that instantly triggers alerts when specific budget thresholds are breached.
+- **Reactive Overspending Alerts & Ledger Stream**  
+  Real-time administrative control panel powered by Laravel Livewire for instant USD cash-flow metrics, guardrail breach banners, and paginated ledger records without SPA JavaScript overhead.
 
-- **Single-Page Ledger Analytics Dashboard**  
-  A modern administrative internal portal powered by Laravel Livewire v3 for real-time visual cash flow streams and balance analytics without the operational bloat of decoupled JavaScript frameworks.
-
-- **Absolute Financial Data Precision**  
-  Eliminates floating-point calculation discrepancies by implementing strict arithmetic precision definitions (`decimal:15,2`) across all transactional database schemas.
+- **Strict Financial Arithmetic Precision**  
+  Eliminates floating-point rounding discrepancies by enforcing `DECIMAL(15,2)` column definitions across all transactional and budgeting schemas.
 
 ---
 
-# 🛠️ Global Technology Stack
+## Technology Stack
 
-- **Core Framework:** Laravel 12 (PHP 8.2+)
-- **Reactive Interface Layer:** Laravel Livewire v3 & Tailwind CSS
-- **Relational Storage Engine:** PostgreSQL / MySQL
-- **API Architectural Style:** Stateless REST Architecture with JSON-API compliant resource formatting
-- **Authentication & Security:** Laravel Sanctum
+- **Backend Core:** Laravel 12 (PHP 8.2+)
+- **Reactive Frontend:** Laravel Livewire & Tailwind CSS
+- **Database Engines:** SQLite (Local/Testing) · MySQL / PostgreSQL (Production)
+- **API & Security:** Laravel Sanctum (Stateless Bearer Token Authentication) & Form Request Validation
+- **Automated Testing:** PHPUnit Feature & Unit Test Suites (`RefreshDatabase`)
 
 ---
 
-# 📂 Production-Grade Directory Blueprint
+## Project Architecture Blueprint
 
 ```text
 app/
 ├── Http/
 │   ├── Controllers/
-│   │   ├── Api/               # Stateless JSON API controllers
-│   │   └── Web/               # Dashboard and web controllers
-│   ├── Requests/              # Form Request validation layers
-│   └── Resources/             # API transformation resources
-├── Livewire/                  # Reactive server-driven UI components
-└── Models/                    # Strictly typed Eloquent models
+│   │   └── Api/
+│   │       ├── AuthController.php             # Stateless Sanctum token issuance & revocation
+│   │       ├── TransactionApiController.php   # Ledger CRUD & inline guardrail evaluation
+│   │       └── WebhookController.php          # Automated payment gateway & QRIS ingestion
+│   ├── Requests/
+│   │   ├── StoreBudgetRequest.php             # Monthly cap validation rules
+│   │   └── StoreTransactionRequest.php        # Strict ledger payload validation
+│   └── Resources/
+│       ├── CategoryResource.php               # Standardized JSON category transformer
+│       └── TransactionResource.php            # Nested transaction & category JSON resource
+├── Livewire/
+│   └── DashboardOverview.php                  # Reactive financial metrics & alert engine
+├── Models/
+│   ├── Budget.php                             # Monthly category budget caps
+│   ├── Category.php                           # Income & expense classifications
+│   ├── Transaction.php                        # Decimal(15,2) ledger records with JSON payload
+│   └── User.php                               # Sanctum-enabled user relations
+└── Services/
+    └── BudgetGuardrailService.php             # Core overspending detection & overage engine
 ```
 
 ---
 
-# 💻 Local Installation & Technical Deployment
+## Core API Endpoints
 
-## System Prerequisites
-
-Before starting, ensure your environment includes:
-
-- PHP >= 8.2
-- Composer
-- Node.js & NPM
-- MySQL or PostgreSQL
-- PHP Extensions:
-  - `pdo`
-  - `zip`
+| Method | Endpoint | Auth | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/login` | Public | Authenticate user and issue Sanctum personal access token |
+| `GET` | `/api/transactions` | `auth:sanctum` | Retrieve paginated user ledger transactions with categories |
+| `POST` | `/api/transactions` | `auth:sanctum` | Store a new transaction and run real-time `BudgetGuardrailService` check |
+| `POST` | `/api/webhooks/payment` | Public (Signed) | Ingest automated external gateway / QRIS settlement payloads |
 
 ---
 
-## 1. Clone the Repository
+## Local Installation & Setup
+
+### 1. Clone & Install Dependencies
 
 ```bash
-git clone https://github.com/muhamadmuhibudin/fintrackapp.git
-
+git clone [https://github.com/muhamadmuhibudin/fintrackapp.git](https://github.com/muhamadmuhibudin/fintrackapp.git)
 cd fintrackapp
-```
 
----
-
-## 2. Install Backend & Frontend Dependencies
-
-```bash
 composer install
-
-npm install
-npm run dev
 ```
 
----
-
-## 3. Configure Environment Variables
+### 2. Configure Environment & Application Key
 
 ```bash
 cp .env.example .env
-
 php artisan key:generate
 ```
 
-Then update your `.env` database credentials:
+*(By default, SQLite works out of the box for instant local evaluation. To use MySQL or PostgreSQL, update `DB_CONNECTION` and credentials inside `.env`.)*
 
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=fintrackapp
-DB_USERNAME=root
-DB_PASSWORD=
-```
+### 3. Run Migrations & Demo Seeder
 
----
-
-## 4. Run Database Migrations
+Populate the database schema along with calibrated USD demo transactions and an active budget guardrail scenario:
 
 ```bash
-php artisan migrate
+php artisan migrate:fresh --seed
 ```
 
----
-
-## 5. Start the Local Development Server
+### 4. Start Local Development Server
 
 ```bash
 php artisan serve
 ```
 
----
-
-# 🧪 Production & Coding Compliance Standard
-
-- **Semantic Conventional Commits**  
-  Strict enforcement of structured commit naming:
-  - `feat()`
-  - `fix()`
-  - `refactor()`
-  - `docs()`
-  - `chore()`
-
-- **Defensive Static Typing**  
-  Mandatory explicit scalar typing, typed properties, and strict return types across the application domain.
-
-- **Idempotent Webhook Processing**  
-  Validation mechanisms preventing duplicate webhook ingestion and malicious payload re-delivery.
+Visit `http://127.0.0.1:8000` to inspect the live financial dashboard and guardrail alert banner.
 
 ---
 
-# 📄 License
+## Running Automated Tests
 
-This project is open-sourced software licensed under the MIT License.
+Execute the PHPUnit test suite covering the `BudgetGuardrailService` breach engine and Livewire dashboard rendering:
+
+```bash
+php artisan test
+```
+
+---
+
+## Engineering Standards
+
+- **Semantic Conventional Commits:** Atomic commit history strictly following `feat()`, `fix()`, `refactor()`, `test()`, `docs()`, and `chore()`.
+- **Separation of Concerns:** Thin controllers delegating validation to Form Requests, transformations to API Resources, and financial rules to dedicated Service classes.
+
+---
+
+## License
+
+This project is open-sourced software licensed under the [MIT License](LICENSE).
